@@ -257,6 +257,35 @@ input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:
 .ci b{color:var(--partner)}
 .rw.duoopen .ic{background:linear-gradient(135deg,var(--accent),var(--partner));color:#fff}
 @media (max-width:380px){.duogrid{grid-template-columns:1fr}}
+/* partner week + messages */
+.wkstrip{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.wd{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.7rem;color:var(--muted);font-weight:600}
+.wd i{width:26px;height:26px;border-radius:50%;background:var(--bg);border:1.5px solid var(--line);display:block}
+.wd.on i{background:var(--partner);border-color:var(--partner)}
+.wd.td span{color:var(--ink)}
+.wd.td i{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--partner-soft)}
+#pweek .pstat{background:var(--partner-soft);border-color:transparent}
+#pweek h2{color:var(--partner)}
+.wlist{display:flex;flex-direction:column;gap:4px;font-size:.9rem}
+.wlist > span{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:700}
+.ld{display:flex;justify-content:space-between;gap:10px;font-size:.86rem;padding:6px 0;border-bottom:1px solid var(--line)}
+.ld b{font-family:var(--mono);font-weight:500;white-space:nowrap;font-size:.8rem}
+.quick{display:flex;gap:6px;flex-wrap:wrap}
+.qm{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:6px 11px;font-size:.82rem;cursor:pointer}
+.composer{display:flex;flex-direction:column;gap:8px}
+.composer textarea{width:100%;resize:vertical;min-height:60px}
+.cmprow{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.msgprev{position:relative;width:96px}
+.msgprev img{width:96px;height:96px;object-fit:cover;border-radius:12px;display:block}
+.msgprev button{position:absolute;top:-8px;right:-8px;width:26px;height:26px;border-radius:50%;border:0;background:var(--ink);color:var(--bg);cursor:pointer;font-weight:700}
+.msgs{display:flex;flex-direction:column;gap:10px}
+.mb{max-width:85%;padding:10px 12px;border-radius:16px;display:flex;flex-direction:column;gap:6px;font-size:.93rem;overflow-wrap:anywhere}
+.mb.me{align-self:flex-end;background:var(--accent-soft);border-bottom-right-radius:4px}
+.mb.pt{align-self:flex-start;background:var(--partner-soft);border-bottom-left-radius:4px}
+.mb img{width:100%;max-width:240px;border-radius:12px;cursor:zoom-in;display:block}
+.mb .mt{font-size:.72rem;color:var(--muted)}
+.lightbox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:16px;cursor:zoom-out}
+.lightbox img{max-width:100%;max-height:100%;border-radius:12px}
 /* toast + confetti */
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,40px);opacity:0;z-index:40;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:16px;font-weight:600;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);max-width:calc(100% - 32px);text-align:center;pointer-events:none}
 .toast.show{opacity:1;transform:translate(-50%,0);transition:all .35s cubic-bezier(.2,1.2,.4,1)}
@@ -403,6 +432,17 @@ body.timing .toast{bottom:calc(104px + env(safe-area-inset-bottom,0px))}
 
   <section class="panel" id="p-juntos" role="tabpanel" hidden>
     <div class="card" id="duocard"></div>
+    <div class="card" id="pweek"></div>
+    <div class="card" id="msgcard">
+      <h2>Mensajes</h2>
+      <div class="quick" id="quickmsgs"></div>
+      <div class="composer">
+        <textarea id="msg-text" rows="2" maxlength="500" placeholder="Escribe algo bonito..."></textarea>
+        <div id="msg-prev" class="msgprev" hidden></div>
+        <div class="cmprow"><label class="btn ghost sm" for="msg-photo">Agregar foto</label><input type="file" id="msg-photo" accept="image/*" hidden><button class="btn sm" id="msg-send" type="button">Enviar</button></div>
+      </div>
+      <div class="msgs" id="msgs"></div>
+    </div>
     <div class="card"><h2>Te festejaron</h2><div class="chin" id="cheersin"></div></div>
     <div class="card"><h2 id="feed-h">Actividad</h2><p class="cue" id="feed-cue"></p><div class="feed" id="feed"></div></div>
     <div class="card"><h2>Premios en pareja</h2><p class="cue">Se desbloquean cuando los dos cumplen. Son para disfrutarlos juntos.</p><div class="rewards" id="duorewards"></div></div>
@@ -413,6 +453,7 @@ body.timing .toast{bottom:calc(104px + env(safe-area-inset-bottom,0px))}
 <div class="toast" id="toast" role="status"></div>
 <div class="rtimer" id="rtimer" hidden role="timer" aria-live="polite"><div class="rt-bar"><i id="rt-bar"></i></div><div class="rt-row"><div style="min-width:0"><div class="rt-label" id="rt-label">Descanso</div><div class="rt-time" id="rt-time">0:00</div></div><div class="rt-btns"><button class="rtb" type="button" data-adj="-15">−15</button><button class="rtb" type="button" data-adj="15">+15</button><button class="rtb skip" type="button" id="rt-skip">Saltar</button></div></div></div>
 <div class="sheet" id="loginsheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheet-h"><div class="sheetcard"><div class="eyebrow">Antes de empezar</div><h2 id="sheet-h">Guarda tu progreso</h2><p class="cue" id="sheet-msg"></p><button class="btn" id="sheet-login" type="button"><span class="gdot">G</span>Entrar con Google</button><button class="btn ghost" id="sheet-later" type="button">Ahora no</button></div></div>
+<div class="lightbox" id="lightbox" hidden><img id="lb-img" alt="Foto"></div>
 <canvas id="confetti" aria-hidden="true"></canvas>
 
 <script>
@@ -1304,6 +1345,7 @@ function who(cls,prof,st,x){
 }
 function renderJuntos(){
   document.getElementById("tab-juntos").classList.remove("dot");
+  renderPartnerWeek();renderMsgs();
   const me=stats(), pt=stats(pstore,PARTNER);
   const same=[...me.dates].filter(d=>pt.dates.has(d)).length;
   const weeksBoth=Object.keys(me.weeks).filter(w=>me.weeks[w]>=5&&(pt.weeks[w]||0)>=5).length;
@@ -1333,6 +1375,85 @@ function renderJuntos(){
       <div style="min-width:0"><div class="prize">${esc(r.prize)}</div><div class="goal">${esc(r.goal)}</div><div class="foot">${open?`<span class="usedtag" style="color:var(--accent-deep)">¡Desbloqueado! Disfrútenlo juntos</span>`:`<div class="pbar"><i style="width:${pct}%"></i></div><span class="cnt">${Math.min(a,b)}/${b}</span>`}</div></div></div>`;
   }).join("");
 }
+// ---- partner week summary ----
+function exName(key,prof){
+  const n=nameFor(key,prof), b=key.split("~")[0]; if(n!==b) return n;
+  for(const p of [0,1,2])for(const d of prof.plan)for(const e of exercisesFor(d.key,p,prof))if(e.id===b)return e.name;
+  return b;
+}
+function renderPartnerWeek(){
+  const P=PARTNER, t=today(), w0=monday(t), el=document.getElementById("pweek");
+  const ss=sessOf(pstore).filter(s=>s.date>=w0&&s.date<=t&&trained(s,P));
+  const days=new Set(ss.map(s=>s.date));
+  let sets=0,lbs=0;ss.forEach(s=>{sets+=setsDone(s);lbs+=vol(s);});
+  const prs=[];ss.forEach(s=>Object.entries(s.prs||{}).forEach(([k,v])=>prs.push(exName(k,P)+": "+v+" lbs")));
+  const c=pstore.settings||{};
+  const rws=Object.entries(c.unlockedAt||{}).filter(([id,d])=>d>=w0).map(([id])=>(P.rewards.find(r=>r.id===id)||{}).prize).filter(Boolean);
+  const prot=Object.values(pstore).filter(v=>v&&v.kind==="p"&&v.date>=w0&&num(v.g)>=P.prot).length;
+  const last=sessOf(pstore).filter(s=>trained(s,P)&&!(P.BY[s.day]||{}).cardio).sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:(b.updatedAt||0)-(a.updatedAt||0))[0];
+  const strip=["L","M","M","J","V","S","D"].map((l,i)=>{const d=addDays(w0,i);return `<div class="wd${days.has(d)?" on":""}${d===t?" td":""}"><span>${l}</span><i></i></div>`;}).join("");
+  let lastHTML="";
+  if(last){
+    const d=P.BY[last.day]||{title:last.day};
+    const rows=Object.entries(last.sets||{}).map(([k,arr])=>{
+      const done=(arr||[]).filter(x=>x&&(x.done||num(x.reps)));if(!done.length)return "";
+      const top=done.reduce((a,x)=>num(x.kg)>num(a.kg)?x:a,done[0]);
+      return `<div class="ld"><span>${esc(exName(k,P))}</span><b>${num(top.kg)?num(top.kg)+" lbs × "+esc(top.reps||"?"):esc(top.reps||"?")} · ${done.length} ${done.length===1?"serie":"series"}</b></div>`;
+    }).join("");
+    lastHTML=`<details${last.date===t?" open":""}><summary>Último entreno: ${esc(d.title)} · ${rel(last.date)}</summary><div style="margin-top:6px">${rows}</div></details>`;
+  }
+  el.innerHTML=`<h2>La semana de ${P.name}</h2><div class="wkstrip">${strip}</div>
+    <div class="pstats"><div class="pstat"><div class="k">Entrenos</div><div class="v">${days.size}/6</div></div><div class="pstat"><div class="k">Series</div><div class="v">${sets}</div></div><div class="pstat"><div class="k">Libras</div><div class="v">${lbs.toLocaleString("en-US")}</div></div></div>
+    ${prs.length?`<div class="wlist"><span>Récords esta semana</span>${prs.map(p=>`<div>★ ${esc(p)}</div>`).join("")}</div>`:""}
+    ${rws.length?`<div class="wlist"><span>Premios esta semana</span>${rws.map(p=>`<div>♥ ${esc(p)}</div>`).join("")}</div>`:""}
+    <div class="muted" style="font-size:.85rem">Meta de proteína cumplida ${prot} ${prot===1?"día":"días"} esta semana.</div>
+    ${lastHTML||`<div class="empty">${fsRef?`${P.name} todavía no ha entrenado esta semana.`:`Entra con Google para ver la semana de ${P.name}.`}</div>`}`;
+}
+// ---- messages ----
+const notes={}; let pendingPhoto=null;
+const QUICK=meKey==="cristian"?["¡Qué orgullo me das!","Eres una máquina 💪","Te amo, sigue así ❤️","Mañana vamos juntos al gym"]:["¡Qué orgullo me das!","Eres un máquina 💪","Te amo, sigue así ❤️","Mañana vamos juntos al gym"];
+function compress(file){return new Promise((res,rej)=>{const img=new Image(),url=URL.createObjectURL(file);
+  img.onload=()=>{let w=img.naturalWidth,h=img.naturalHeight;const m=1000/Math.max(w,h);if(m<1){w=Math.round(w*m);h=Math.round(h*m);}
+    const c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(img,0,0,w,h);URL.revokeObjectURL(url);
+    let q=.75,d=c.toDataURL("image/jpeg",q);while(d.length>650000&&q>.3){q-=.15;d=c.toDataURL("image/jpeg",q);}res(d);};
+  img.onerror=()=>{URL.revokeObjectURL(url);rej();};img.src=url;});}
+function showPrev(){const p=document.getElementById("msg-prev");if(!pendingPhoto){p.hidden=true;p.innerHTML="";return;}
+  p.hidden=false;p.innerHTML=`<img src="${pendingPhoto}" alt="Foto para enviar"><button type="button" id="msg-rm" aria-label="Quitar foto">×</button>`;
+  document.getElementById("msg-rm").onclick=()=>{pendingPhoto=null;showPrev();};}
+function renderMsgs(){
+  document.getElementById("quickmsgs").innerHTML=QUICK.map(q=>`<button class="qm" type="button">${esc(q)}</button>`).join("");
+  document.querySelectorAll("#quickmsgs .qm").forEach(b=>b.onclick=()=>{const ta=document.getElementById("msg-text");ta.value=b.textContent;ta.focus();});
+  document.getElementById("msg-text").placeholder="Escríbele algo bonito a "+PARTNER.name+"...";
+  const list=Object.values(notes).filter(n=>n&&(n.from===meKey||n.to===meKey)).sort((a,b)=>b.at-a.at).slice(0,30);
+  document.getElementById("msgs").innerHTML=list.length?list.map(n=>{const mine=n.from===meKey;
+    return `<div class="mb ${mine?"me":"pt"}">${n.photo?`<img src="${n.photo}" alt="Foto de ${mine?"ti":PARTNER.name}" data-lb="1">`:""}${n.text?`<div>${esc(n.text)}</div>`:""}<div class="mt">${mine?"Tú":PARTNER.name} · ${rel(iso(new Date(n.at)))} ${new Date(n.at).toLocaleTimeString("es",{hour:"numeric",minute:"2-digit"})}</div></div>`;}).join("")
+    :`<div class="empty">Mándale un mensaje o una foto del gym a ${PARTNER.name}. Le llega al instante.</div>`;
+  document.querySelectorAll("#msgs img[data-lb]").forEach(i=>i.onclick=()=>{document.getElementById("lb-img").src=i.src;document.getElementById("lightbox").hidden=false;});
+}
+document.getElementById("lightbox").onclick=()=>{document.getElementById("lightbox").hidden=true;};
+document.getElementById("msg-photo").onchange=async e=>{const f=e.target.files&&e.target.files[0];e.target.value="";if(!f)return;
+  try{pendingPhoto=await compress(f);showPrev();}catch(err){toast("No se pudo abrir esa foto. Prueba con otra.");}};
+document.getElementById("msg-send").onclick=()=>{
+  const ta=document.getElementById("msg-text"), text=ta.value.trim();
+  if(!text&&!pendingPhoto){toast("Escribe algo o agrega una foto");return;}
+  if(!fsRef){toast("Entra con Google para mandarle mensajes a "+PARTNER.name);return;}
+  const at=Date.now(), id=meKey+"_"+at, doc={from:meKey,to:PARTNER.key,text,at};if(pendingPhoto)doc.photo=pendingPhoto;
+  notes[id]=doc;ta.value="";pendingPhoto=null;showPrev();renderMsgs();toast("Enviado a "+PARTNER.name);
+  fsRef.collection("notes").doc(id).set(doc).catch(()=>{delete notes[id];renderMsgs();toast("No se pudo enviar. Revisa tu conexión.");});
+};
+function onNotes(snap){
+  snap.docChanges().forEach(ch=>{if(ch.type==="removed")delete notes[ch.doc.id];else notes[ch.doc.id]=ch.doc.data();});
+  let last=0;try{last=+(localStorage.getItem("fit-note-seen-"+meKey)||0);}catch(e){}
+  const mine=Object.values(notes).filter(n=>n&&n.to===meKey&&n.at>last);
+  if(mine.length){
+    const n=mine.sort((a,b)=>a.at-b.at)[mine.length-1];
+    toast(PARTNER.name+" te mandó "+(n.photo?"una foto":"un mensaje")+(n.text?": "+n.text.slice(0,60):""));
+    try{localStorage.setItem("fit-note-seen-"+meKey,String(Math.max(...mine.map(x=>x.at))));}catch(e){}
+    if(tab!=="juntos")document.getElementById("tab-juntos").classList.add("dot");
+  }
+  if(tab==="juntos")renderMsgs();
+}
+
 async function sha(x){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(String(x||"").trim().toLowerCase()));return [...new Uint8Array(b)].map(v=>v.toString(16).padStart(2,"0")).join("");}
 
 // ================= boot =================
@@ -1430,6 +1551,7 @@ document.getElementById("sheet-later").onclick=hideSheet;
     });
     unsubs.push(fs.collection(PARTNER.col).onSnapshot(onPartner,()=>{}));
     unsubs.push(fs.collection("cheers").onSnapshot(onCheers,()=>{}));
+    unsubs.push(fs.collection("notes").onSnapshot(onNotes,()=>{}));
   });
 })();
 })();
