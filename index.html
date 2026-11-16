@@ -288,6 +288,23 @@ input,select,textarea{font:inherit;color:var(--ink);background:var(--bg);border:
 .mb .mt{font-size:.72rem;color:var(--muted)}
 .lightbox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:16px;cursor:zoom-out}
 .lightbox img{max-width:100%;max-height:100%;border-radius:12px}
+/* entrenar juntos */
+.whose{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px}
+.wh{border:0;border-radius:10px;padding:10px 6px;font-weight:700;cursor:pointer;background:transparent;color:var(--muted);font-size:.9rem}
+.wh[aria-pressed="true"]#wh-me{background:var(--accent);color:var(--accent-ink)}
+.wh[aria-pressed="true"]#wh-pt{background:var(--partner);color:var(--partner-ink)}
+.days.ptmode .day[aria-pressed="true"]{background:var(--partner);border-color:var(--partner);color:var(--partner-ink)}
+.days.ptmode .day:not([aria-pressed="true"]) b{color:var(--partner)}
+.days.ptmode .day[aria-pressed="true"] b,.days.ptmode .day[aria-pressed="true"] span{color:var(--partner-ink)}
+#togethercard{border-color:var(--partner-soft);background:linear-gradient(180deg,var(--partner-soft),var(--surface) 75%)}
+.tgrow{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.tgname{font-family:var(--display);font-weight:800;color:var(--partner);font-size:1.05rem}
+.tglive{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--partner)}
+.tglive i{width:8px;height:8px;border-radius:50%;background:var(--partner)}
+@media (prefers-reduced-motion:no-preference){.tglive i{animation:tgp 1.4s ease infinite}@keyframes tgp{50%{opacity:.3}}}
+.ptsets{font-size:.8rem;background:var(--partner-soft);border-radius:10px;padding:6px 10px}
+.ptsets b{color:var(--partner)}
+.borrow{font-size:.78rem;font-weight:700;color:var(--partner)}
 /* toast + confetti */
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,40px);opacity:0;z-index:40;background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:16px;font-weight:600;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);max-width:calc(100% - 32px);text-align:center;pointer-events:none}
 .toast.show{opacity:1;transform:translate(-50%,0);transition:all .35s cubic-bezier(.2,1.2,.4,1)}
@@ -392,6 +409,8 @@ body.timing .toast{bottom:calc(104px + env(safe-area-inset-bottom,0px))}
   <section class="panel" id="p-entreno" role="tabpanel">
     <div class="card soft" id="phasecard"></div>
     <div class="card" id="protcard"></div>
+    <div class="card" id="togethercard"></div>
+    <div class="whose" role="group" aria-label="Rutina de hoy"><button type="button" class="wh" id="wh-me"></button><button type="button" class="wh" id="wh-pt"></button></div>
     <nav class="days" id="days" aria-label="Días de la semana"></nav>
     <div id="today" aria-live="polite"></div>
     <div class="card notes">
@@ -731,7 +750,8 @@ const PROFILES={
 for(const p of Object.values(PROFILES)){p.BY=Object.fromEntries(p.plan.map(d=>[d.key,d]));if(p.plans)p.plansBY=p.plans.map(pl=>Object.fromEntries(pl.map(d=>[d.key,d])));}
 function planOf(prof,ph){prof=prof||ME;return prof.plans?prof.plans[ph===1?1:0]:prof.plan;}
 function dayOf(prof,key,ph){prof=prof||ME;return prof.plans?prof.plansBY[ph===1?1:0][key]:prof.BY[key];}
-function sessDay(s,prof){return dayOf(prof,s.day,s.phase);}
+function srcOf(s,prof){return s&&s.src&&PROFILES[s.src]?PROFILES[s.src]:(prof||ME);}
+function sessDay(s,prof){return dayOf(srcOf(s,prof),s.day,s.phase);}
 const meKey=document.documentElement.getAttribute("data-p")==="cristian"?"cristian":"raquel";
 const ME=PROFILES[meKey], PARTNER=PROFILES[ME.other];
 const PLAN=ME.plan, BY=ME.BY, PHASES=ME.phases, OVR=ME.ovr, ALTS=ME.alts, PROT_GOAL=ME.prot, MEAS=ME.meas;
@@ -894,7 +914,13 @@ const C_REWARDS=[
 ];
 PROFILES.raquel.rewards=R_REWARDS;PROFILES.cristian.rewards=C_REWARDS;
 const REWARDS=ME.rewards;
+function sameRoutineCount(){
+  const mine={};sessOf(store).filter(x=>trained(x,ME)).forEach(x=>{mine[x.date+"|"+(x.src||meKey)+"|"+x.day]=1;});
+  const ds=new Set();sessOf(pstore).filter(x=>trained(x,PARTNER)).forEach(x=>{if(mine[x.date+"|"+(x.src||PARTNER.key)+"|"+x.day])ds.add(x.date);});
+  return ds.size;
+}
 const DUO_REWARDS=[
+ {id:"d0",prize:"Masaje mutuo de 20 minutos",goal:"Hagan la misma rutina juntos 3 veces",icon:"hand",need:b=>[b.sameR,3]},
  {id:"d1",prize:"Batido juntos después del gym",goal:"Entrenen el mismo día 5 veces",icon:"cup",need:b=>[b.same,5]},
  {id:"d2",prize:"Noche de cocinar juntos algo rico",goal:"Los dos completen 5 días en la misma semana",icon:"plate",need:b=>[b.weeksBoth,1]},
  {id:"d3",prize:"Sesión de fotos fitness juntos",goal:"Rompan 10 récords entre los dos",icon:"star",need:b=>[b.prs,10]},
@@ -930,11 +956,13 @@ function renderHero(){
 
 // ================= UI: entreno =================
 const DAYMAP=["d7","d1","d2","d3","d4","d5","d6"];
-let cur={day:DAYMAP[new Date().getDay()],date:today()};
-const sid=()=>cur.date+"_"+cur.day;
+let cur={day:DAYMAP[new Date().getDay()],date:today(),src:null};
+const sid=()=>cur.date+"_"+(cur.src?cur.src+"-":"")+cur.day;
+const curProf=()=>cur.src?PROFILES[cur.src]:ME;
+function curPhase(){const s=store[sid()];if(s&&s.phase!=null)return s.phase;return cur.src?phaseAt(cur.date,pstore,PARTNER).idx:phaseAt(cur.date).idx;}
 function ensure(){
   const id=sid();
-  if(!store[id]) store[id]={kind:"s",date:cur.date,day:cur.day,phase:phaseAt(cur.date).idx,sets:{},swaps:{},prs:{},cardio:{}};
+  if(!store[id]){store[id]={kind:"s",date:cur.date,day:cur.day,phase:curPhase(),sets:{},swaps:{},prs:{},cardio:{}};if(cur.src)store[id].src=cur.src;}
   const s=store[id]; s.sets=s.sets||{};s.swaps=s.swaps||{};s.prs=s.prs||{};s.cardio=s.cardio||{};
   return s;
 }
@@ -982,11 +1010,49 @@ function renderProtein(){
 
 function renderDays(){
   const nav=document.getElementById("days");
-  const s0=store[sid()];
-  nav.innerHTML=planOf(ME,s0&&s0.phase!=null?s0.phase:phaseAt(cur.date).idx).map((d,i)=>`<button class="day" data-k="${d.key}" aria-pressed="${d.key===cur.day}"><b>${i+1}</b><span>${d.short}</span></button>`).join("");
+  const P0=curProf();
+  document.getElementById("wh-me").textContent="Mi rutina";document.getElementById("wh-pt").textContent="Rutina de "+PARTNER.name;
+  document.getElementById("wh-me").setAttribute("aria-pressed",!cur.src);document.getElementById("wh-pt").setAttribute("aria-pressed",!!cur.src);
+  nav.classList.toggle("ptmode",!!cur.src);
+  nav.innerHTML=planOf(P0,curPhase()).map((d,i)=>`<button class="day" data-k="${d.key}" aria-pressed="${d.key===cur.day}"><b>${i+1}</b><span>${d.short}</span></button>`).join("");
   nav.querySelectorAll(".day").forEach(b=>b.onclick=()=>{cur.day=b.dataset.k;openSwap=null;openEx=null;renderDays();renderToday();});
 }
 
+function ptToday(date){
+  return sessOf(pstore).filter(x=>x.date===(date||today())&&trained(x,PARTNER)).sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0))[0];
+}
+function ptTrainedOn(date){return !!ptToday(date);}
+function ptDayTitle(date){const p=ptToday(date);if(!p)return "";const d=sessDay(p,PARTNER)||{title:""};return PARTNER.name+": "+d.title+(p.src===meKey?" (tu rutina)":"");}
+function ptSetsHTML(key){
+  const p=ptToday(cur.date);if(!p||!p.sets||!p.sets[key])return "";
+  const done=p.sets[key].filter(x=>x&&(x.done||num(x.reps)));if(!done.length)return "";
+  return `<div class="ptsets"><b>${PARTNER.name} hoy:</b> ${done.map(x=>num(x.kg)?num(x.kg)+"×"+esc(x.reps||"?"):esc(x.reps||"?")).join(" · ")}</div>`;
+}
+function renderTogether(){
+  const el=document.getElementById("togethercard");if(!el)return;
+  const p=ptToday(today());
+  if(!fsRef){el.hidden=true;return;}
+  if(!p){el.hidden=false;
+    const pd=dayOf(PARTNER,DAYMAP[new Date().getDay()],phaseAt(today(),pstore,PARTNER).idx);
+    el.innerHTML=`<div class="tgrow"><span class="tgname">${PARTNER.name}</span><span class="muted" style="font-size:.82rem">${pd.rest?"Hoy le toca descansar":"Hoy le toca: "+esc(pd.title)}</span></div><p class="cue" style="margin:0">¿Van juntos? Elige "Mi rutina" o "Rutina de ${PARTNER.name}" abajo y los dos marcan sus series. Aquí ves su avance en vivo.</p>`;return;}
+  const sp=srcOf(p,PARTNER), d=sessDay(p,PARTNER)||{title:p.day}, exs=exercisesFor(p.day,p.phase!=null?p.phase:0,sp);
+  const nd=exs.filter(b=>{const e=effective(b,p,sp);return ((p.sets&&p.sets[e.logKey])||[]).filter(x=>x&&x.done).length>=e.sets;}).length;
+  let last=null;Object.entries(p.sets||{}).forEach(([k,arr])=>(arr||[]).forEach(x=>{if(x&&x.done&&x.t&&(!last||x.t>last.t))last={k,x,t:x.t};}));
+  const mins=last?Math.round((Date.now()-last.t)/60000):null;
+  const live=last&&mins<20;
+  el.hidden=false;
+  el.innerHTML=`<div class="tgrow"><span class="tgname">${PARTNER.name}</span>${live?`<span class="tglive"><i></i>Entrenando ahora</span>`:""}</div>
+    <div style="font-size:.9rem"><b>${esc(d.title)}</b>${p.src===meKey?" · haciendo tu rutina":""} · ${nd} de ${exs.length} ejercicios</div>
+    <div class="pbar"><i style="width:${exs.length?Math.round(nd/exs.length*100):0}%;background:var(--partner)"></i></div>
+    ${last?`<div class="muted" style="font-size:.82rem">Última serie: ${esc(nameFor(last.k,sp))} ${num(last.x.kg)?num(last.x.kg)+" lbs × ":""}${esc(last.x.reps||"")} · ${mins<1?"ahora":"hace "+mins+" min"}</div>`:""}
+    <button class="btn sm" type="button" id="tg-join" style="align-self:flex-start;background:var(--partner);color:var(--partner-ink)">${(cur.src===(p.src||PARTNER.key)&&cur.day===p.day)||(!cur.src&&p.src===meKey&&cur.day===p.day)?"Están en la misma rutina ✓":"Hacer la misma rutina"}</button>`;
+  document.getElementById("tg-join").onclick=()=>{
+    const owner=p.src||PARTNER.key;cur.src=owner===meKey?null:owner;cur.day=p.day;cur.date=today();openSwap=null;openEx=null;renderDays();renderToday();
+    toast("Listo, los dos van con "+esc(d.title));
+  };
+}
+document.getElementById("wh-me").onclick=()=>{cur.src=null;cur.day=DAYMAP[new Date().getDay()];openSwap=null;openEx=null;renderDays();renderToday();};
+document.getElementById("wh-pt").onclick=()=>{cur.src=PARTNER.key;const p=ptToday(cur.date);cur.day=p&&!p.src?p.day:DAYMAP[new Date().getDay()];openSwap=null;openEx=null;renderDays();renderToday();};
 function summaryHTML(s,d){
   const ts=[];Object.values(s.sets||{}).forEach(a=>(a||[]).forEach(x=>{if(x&&x.t)ts.push(x.t);}));
   const mins=ts.length>1?Math.round((Math.max(...ts)-Math.min(...ts))/60000)+2:null;
@@ -997,13 +1063,15 @@ function summaryHTML(s,d){
    <div class="sumgrid"><div><b>${mins?mins:"-"}</b><span>minutos</span></div><div><b>${vol(s).toLocaleString("en-US")}</b><span>lbs levantadas</span></div><div><b>${setsDone(s)}</b><span>series</span></div></div>
    ${prs.length?`<div class="sumsec"><span>Récords de hoy</span>${prs.map(p=>`<div>★ ${p}</div>`).join("")}</div>`:""}
    ${rw.length?`<div class="sumsec"><span>Premios ganados</span>${rw.map(r=>`<div>♥ ${esc(r.prize)}</div>`).join("")}</div>`:""}
+   ${ptTrainedOn(s.date)?`<div class="sumsec"><span>Hoy entrenaron juntos</span><div>${esc(ptDayTitle(s.date))}</div></div>`:""}
    <div class="sumfoot">Poniéndonos fit juntos ♥</div></div>`;
 }
 function renderToday(){
   const host=document.getElementById("today"), s=store[sid()];
-  const phIdx=s&&s.phase!=null?s.phase:phaseAt(cur.date).idx;
-  const d=dayOf(ME,cur.day,phIdx);
-  let h=`<div class="dayhead"><div><div class="eyebrow">${ME.plans?PHASES[phIdx].name+" · ":""}Día ${planOf(ME,phIdx).indexOf(d)+1}</div><h2>${d.title}</h2><p>${d.sub}</p></div>`;
+  const SP=curProf(), phIdx=curPhase();
+  const d=dayOf(SP,cur.day,phIdx);
+  renderTogether();
+  let h=`<div class="dayhead"><div>${cur.src?`<div class="borrow">Entrenando la rutina de ${SP.name}</div>`:""}<div class="eyebrow">${SP.plans?SP.phases[phIdx].name+" · ":""}Día ${planOf(SP,phIdx).indexOf(d)+1}</div><h2>${d.title}</h2><p>${d.sub}</p></div>`;
   if(!d.rest) h+=`<label class="datepick">Fecha<input type="date" id="date-in" value="${cur.date}"></label>`;
   h+=`</div>`;
   if(d.rest){
@@ -1018,14 +1086,14 @@ function renderToday(){
       <label class="field">Notas<textarea id="c-notes" rows="2" placeholder="Cómo te sentiste">${esc(c.notes)}</textarea></label>
       <div class="status" id="status"></div></div>`;
   } else {
-    const exs=exercisesFor(cur.day,phIdx);
-    const isDone=b=>{const e=effective(b,s);const l=(s&&s.sets[e.logKey])||[];return l.filter(x=>x&&x.done).length>=e.sets;};
+    const exs=exercisesFor(cur.day,phIdx,SP);
+    const isDone=b=>{const e=effective(b,s,SP);const l=(s&&s.sets[e.logKey])||[];return l.filter(x=>x&&x.done).length>=e.sets;};
     const nDone=exs.filter(isDone).length, allDone=nDone===exs.length;
     if(openEx===null||(openEx!==""&&!exs.some(b=>b.id===openEx))){const f=exs.find(b=>!isDone(b));openEx=f?f.id:"";}
     h+=allDone?summaryHTML(s,d):`<div class="daybar"><div class="dbtop"><b>Progreso de hoy</b><span class="rx">${nDone} de ${exs.length} ejercicios</span></div><div class="pbar"><i style="width:${Math.round(nDone/exs.length*100)}%"></i></div></div>`;
     h+=`<div class="list" style="margin-top:12px">`;
     exs.forEach(base=>{
-      const ex=effective(base,s), key=ex.logKey;
+      const ex=effective(base,s,SP), key=ex.logKey;
       const last=lastFor(key,cur.date);
       const timed=ex.unit==="s"||ex.unit==="min", repsOnly=ex.unit==="r", ul=ex.unit==="min"?"min":"s";
       const lastTxt=last?`Última vez (${short(last.date)}): <b>${last.sets.map(x=>timed?(x.reps||"?")+" "+ul:repsOnly?(x.reps||"?")+" reps":(num(x.kg)||0)+"×"+(x.reps||"?")).join(" · ")}</b>`:"Primera vez: elige un peso con el que hagas todas las reps con buena técnica.";
@@ -1041,7 +1109,7 @@ function renderToday(){
           :`<div class="wgrp"><button class="pm" type="button" data-d="-5" aria-label="Menos 5 libras">−</button><input ${a}-kg" data-f="kg" inputmode="decimal" value="${esc(v.kg)}" placeholder="${esc(ph1.kg||"lbs")}" aria-label="Serie ${i+1} peso en libras"><button class="pm" type="button" data-d="5" aria-label="Más 5 libras">+</button></div><label><input ${a}-reps" data-f="reps" inputmode="numeric" value="${esc(v.reps)}" placeholder="${esc(ph1.reps||"reps")}" aria-label="Serie ${i+1} repeticiones"><i>reps</i></label>`)+
          `<button class="chk" aria-pressed="${!!v.done}" aria-label="Serie ${i+1} hecha">${checkSvg}</button></div>`;
       }
-      const alts=ALTS[base.id]||[], si=s&&s.swaps?s.swaps[base.id]:undefined;
+      const alts=SP.alts[base.id]||[], si=s&&s.swaps?s.swaps[base.id]:undefined;
       const swapUI=openSwap===base.id?`<div class="swaps"><p>¿Máquina ocupada? Elige otra opción para el mismo músculo:</p>
         <button class="swapopt" data-ex="${base.id}" data-alt="" aria-pressed="${si==null}">${esc(base.name)} (original)</button>
         ${alts.map((a,i)=>`<button class="swapopt" data-ex="${base.id}" data-alt="${i}" aria-pressed="${si===i}">${esc(a[0])}</button>`).join("")}</div>`:"";
@@ -1057,7 +1125,7 @@ function renderToday(){
           ${swapUI}
           <p class="cue">${esc(ex.cue)}</p>
           ${sug?`<div class="sug">${sug}</div>`:""}
-          <div class="last">${lastTxt}</div>
+          <div class="last">${lastTxt}</div>${ptSetsHTML(key)}
           <div class="sets">${(timed||repsOnly)?"":'<div class="sethead"><span></span><span>Peso (lbs)</span><span>Reps</span><span></span></div>'}${rows}</div></div>`:""}
       </article>`;
     });
@@ -1164,8 +1232,9 @@ function allLiftable(prof){
   return [...seen];
 }
 function nameFor(key,prof){
-  prof=prof||ME;const [b,i]=key.split("~");const m=new Map(allLiftable(prof));
-  if(i!=null&&prof.alts[b]&&prof.alts[b][i])return prof.alts[b][i][0];return m.get(b)||b;
+  prof=prof||ME;const [b,i]=key.split("~");const other=PROFILES[prof.other];const m=new Map([...allLiftable(other),...allLiftable(prof)]);
+  const al=(prof.alts[b]&&prof.alts[b][i])?prof.alts:other.alts;
+  if(i!=null&&al[b]&&al[b][i])return al[b][i][0];return m.get(b)||b;
 }
 function chart(box,pts,unit){
   if(!pts.length){box.innerHTML=`<div class="empty">Todavía no hay datos. Cada vez que guardes uno aparece un punto aquí.</div>`;return;}
@@ -1309,14 +1378,14 @@ const EMO=["🎉","💪","🔥","❤️"];
 function rel(d){const t=today();if(d===t)return "hoy";if(d===addDays(t,-1))return "ayer";return short(d);}
 function isComplete(s,prof){
   const d=sessDay(s,prof); if(!d||!d.ex) return false;
-  const exs=exercisesFor(s.day,s.phase!=null?s.phase:0,prof);
-  return exs.length>0&&exs.every(b=>{const e=effective(b,s,prof);const l=(s.sets&&s.sets[e.logKey])||[];return l.filter(x=>x&&x.done).length>=e.sets;});
+  const sp=srcOf(s,prof), exs=exercisesFor(s.day,s.phase!=null?s.phase:0,sp);
+  return exs.length>0&&exs.every(b=>{const e=effective(b,s,sp);const l=(s.sets&&s.sets[e.logKey])||[];return l.filter(x=>x&&x.done).length>=e.sets;});
 }
 function partnerEvents(){
   const P=PARTNER, out=[], t=today();
   sessOf(pstore).forEach(s=>{
     if(!trained(s,P)) return;
-    const d=sessDay(s,P)||{title:s.day}, at=s.updatedAt||parse(s.date).getTime();
+    const d0=sessDay(s,P)||{title:s.day}, d=Object.assign({},d0,{title:d0.title+(s.src===meKey?" (tu rutina, juntos)":s.src?" (rutina de "+PROFILES[s.src].name+")":"")}), at=s.updatedAt||parse(s.date).getTime();
     if(d.cardio) out.push({id:"w_"+s._id,date:s.date,at,text:"hizo "+d.title.toLowerCase(),you:"hiciste "+d.title.toLowerCase(),detail:(s.cardio&&s.cardio.min?s.cardio.min+" min":"")});
     else if(isComplete(s,P)) out.push({id:"w_"+s._id+"_c",date:s.date,at,text:"completó "+d.title,you:"completaste "+d.title,detail:setsDone(s)+" series · "+vol(s).toLocaleString("en-US")+" lbs"});
     else out.push({id:"w_"+s._id,date:s.date,at,text:(s.date===t?"está entrenando ":"entrenó ")+d.title,you:(s.date===t?"estás entrenando ":"entrenaste ")+d.title,detail:setsDone(s)+" series"});
@@ -1338,6 +1407,7 @@ function onPartner(snap){
   evs.forEach(e=>seenEv.add(e.id));
   if(!snap.metadata.fromCache)pLoaded=true;
   if(tab==="juntos")renderJuntos();
+  else if(tab==="entreno"){const ae=document.activeElement;if(ae&&(ae.tagName==="INPUT"||ae.tagName==="TEXTAREA"))renderTogether();else renderToday();}
 }
 function onCheers(snap){
   snap.docChanges().forEach(ch=>{if(ch.type==="removed")delete cheers[ch.doc.id];else cheers[ch.doc.id]=ch.doc.data();});
@@ -1394,7 +1464,7 @@ function renderJuntos(){
     :`<div class="empty">${signed?`Todavía no hay actividad de ${PARTNER.name}. En cuanto entrene, aparece aquí.`:`Entra con Google para ver la actividad de ${PARTNER.name}.`}</div>`;
   document.querySelectorAll("#feed .re").forEach(b=>b.onclick=()=>{const e=map[b.dataset.ev];if(e)cheer(e,b.dataset.em);});
   // duo rewards
-  const both={same,weeksBoth,prs:me.prs+pt.prs};
+  const both={same,weeksBoth,prs:me.prs+pt.prs,sameR:sameRoutineCount()};
   document.getElementById("duorewards").innerHTML=DUO_REWARDS.map(r=>{
     const [a,b]=r.need(both), open=a>=b, pct=Math.min(100,Math.round(Math.min(a,b)/b*100));
     return `<div class="rw ${open?"duoopen":"locked"}"><div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[open?r.icon:"lock"]}</svg></div>
