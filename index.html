@@ -93,6 +93,8 @@ button{font:inherit}
 .pbar i{display:block;height:100%;background:var(--accent);border-radius:99px}
 .phases{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
 .phases div{font-size:.72rem;text-align:center;padding:6px 4px;border-radius:10px;background:var(--surface);border:1px solid var(--line);color:var(--muted)}
+.phases.cyc{grid-template-columns:repeat(5,1fr)}
+.howto{margin:8px 0 0;padding-left:18px;font-size:.86rem;color:var(--muted);display:flex;flex-direction:column;gap:4px}
 .phases div.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
 details summary{cursor:pointer;font-size:.82rem;color:var(--accent-deep);font-weight:600}
 /* protein */
@@ -585,121 +587,130 @@ const R_ALTS={
  abd2:[["Abducción con banda sentada","abducción con banda sentada glúteo"],["Abducción en polea de pie","abducción en polea de pie glúteo medio"]]
 };
 const R_MEAS=[["peso","Peso","lbs"],["cintura","Cintura","cm"],["cadera","Cadera","cm"],["gluteo","Glúteo","cm"],["muslo","Muslo","cm"]];
-// ================= CRISTIAN =================
-const C_PLAN=[
- {key:"d1",short:"Push",title:"Pecho, hombro y tríceps",sub:"Empuje: pecho, hombro y tríceps, más 15 minutos de cardio",ex:[
-  {id:"bench",name:"Press de banca con barra",sets:4,reps:"6-8",rest:"2-3 min",key:true,cue:"Escápulas juntas y abajo, pies firmes en el piso. Baja la barra a la parte baja del pecho y empuja en línea recta.",q:"press de banca con barra técnica correcta"},
-  {id:"incdb",name:"Press inclinado con mancuernas",sets:3,reps:"8-10",rest:"2 min",cue:"Banco a 30°, baja controlado hasta sentir el estiramiento del pecho, codos a 45°.",q:"press inclinado con mancuernas técnica"},
-  {id:"ohp",name:"Press de hombro con mancuernas sentado",sets:3,reps:"8-10",rest:"90 s",cue:"Espalda pegada al respaldo. Sube sin chocar las mancuernas y baja hasta la altura de las orejas.",q:"press de hombro con mancuernas sentado técnica"},
-  {id:"cablefly",name:"Aperturas en polea",sets:3,reps:"12-15",rest:"60 s",cue:"Codos ligeramente doblados, junta las manos frente al pecho y aprieta 1 segundo.",q:"aperturas en polea pecho técnica"},
-  {id:"lateral",name:"Elevaciones laterales con mancuernas",sets:4,reps:"12-15",rest:"60 s",cue:"Sube hasta la altura del hombro guiando con los codos, sin impulso. Baja lento.",q:"elevaciones laterales técnica correcta"},
-  {id:"dips",name:"Fondos en paralelas",sets:3,reps:"8-12",rest:"90 s",unit:"r",cue:"Torso un poco inclinado hacia adelante, baja hasta 90° en los codos. Si no llegas a 8, usa la máquina asistida.",q:"fondos en paralelas técnica pecho tríceps"},
-  {id:"ropepush",name:"Extensión de tríceps en polea con cuerda",sets:3,reps:"10-12",rest:"60 s",cue:"Codos pegados al cuerpo, abre la cuerda al final y aprieta el tríceps.",q:"extensión de tríceps en polea con cuerda técnica"},
-  {id:"ohtri",name:"Extensión de tríceps sobre la cabeza en polea",sets:2,reps:"12-15",rest:"60 s",cue:"De espaldas a la polea, codos apuntando al frente, estira completo por arriba de la cabeza.",q:"extensión de tríceps sobre la cabeza en polea técnica"},
-  {id:"fin1",name:"Caminata inclinada (final)",sets:1,reps:"15 min",rest:"0 s",unit:"min",cue:"Caminadora con inclinación de 10 a 12% a paso rápido. Quema grasa sin quitarte músculo.",q:"caminata inclinada caminadora 12 3 30"}]},
- {key:"d2",short:"Pull",title:"Espalda y bíceps",sub:"Jalón: espalda ancha, bíceps y trapecio, más 15 minutos de cardio",ex:[
-  {id:"pullup",name:"Dominadas",sets:4,reps:"6-10",rest:"2 min",key:true,unit:"r",cue:"Agarre un poco más ancho que los hombros, sube hasta pasar la barbilla y baja completo. Usa la máquina asistida si no llegas a 6.",q:"dominadas técnica correcta"},
-  {id:"bbrow",name:"Remo con barra",sets:4,reps:"8-10",rest:"2 min",key:true,cue:"Torso a 45° con la espalda recta. Jala la barra hacia el ombligo apretando la espalda.",q:"remo con barra técnica correcta"},
-  {id:"latpull",name:"Jalón al pecho agarre neutro",sets:3,reps:"10-12",rest:"90 s",cue:"Pecho arriba, jala con los codos hacia las costillas sin balancearte.",q:"jalón al pecho agarre neutro técnica"},
-  {id:"cablerow",name:"Remo sentado en polea",sets:3,reps:"10-12",rest:"90 s",cue:"Espalda neutra, lleva el agarre al ombligo y junta escápulas.",q:"remo sentado en polea técnica correcta"},
-  {id:"facepull",name:"Face pull en polea",sets:3,reps:"12-15",rest:"60 s",cue:"Cuerda a la altura de la cara, jala separando las manos hacia las orejas.",q:"face pull polea técnica correcta"},
-  {id:"shrug",name:"Encogimientos con mancuernas",sets:3,reps:"12-15",rest:"60 s",cue:"Sube los hombros hacia las orejas, aguanta 1 segundo arriba, sin girar los hombros.",q:"encogimientos con mancuernas técnica"},
-  {id:"bbcurl",name:"Curl con barra",sets:3,reps:"8-10",rest:"60 s",cue:"Codos fijos a los costados, sube sin balancear el cuerpo y baja lento.",q:"curl con barra técnica correcta"},
-  {id:"hammer",name:"Curl martillo",sets:3,reps:"10-12",rest:"60 s",cue:"Palmas viéndose entre sí, sube alternando sin mover los codos.",q:"curl martillo técnica"},
-  {id:"fin2",name:"Escaladora (final)",sets:1,reps:"15 min",rest:"0 s",unit:"min",cue:"Ritmo constante en el que te cueste un poco platicar. Sin recargarte en los barandales.",q:"stairmaster escaladora técnica"}]},
- {key:"d3",short:"Pierna",title:"Pierna (cuádriceps)",sub:"Sentadilla y cuádriceps, femoral y pantorrilla, más abdomen",ex:[
-  {id:"squat",name:"Sentadilla con barra",sets:4,reps:"6-8",rest:"3 min",key:true,cue:"Barra sobre los trapecios, pecho arriba, rodillas hacia afuera. Baja hasta paralelo o más y sube empujando el piso.",q:"sentadilla con barra técnica correcta"},
-  {id:"legpress",name:"Prensa de piernas",sets:3,reps:"10-12",rest:"2 min",cue:"Pies a la altura media de la plataforma, baja profundo sin despegar la espalda baja.",q:"prensa de piernas técnica correcta"},
-  {id:"bulgarian",name:"Sentadilla búlgara con mancuernas",sets:3,reps:"8-10 c/pierna",rest:"90 s",cue:"Pie de atrás en el banco, baja recto hasta que la rodilla casi toque el piso.",q:"sentadilla búlgara técnica"},
-  {id:"legext",name:"Extensión de cuádriceps",sets:3,reps:"12-15",rest:"60 s",cue:"Sube controlado, aprieta arriba 1 segundo y baja lento.",q:"extensión de cuádriceps máquina técnica"},
-  {id:"seatcurl",name:"Curl femoral sentado",sets:3,reps:"10-12",rest:"60 s",cue:"Muslos bien sujetos, baja el rodillo controlado y sube lento.",q:"curl femoral sentado técnica"},
-  {id:"calf",name:"Elevación de talones de pie",sets:4,reps:"10-15",rest:"60 s",cue:"Pausa abajo estirando y sube completo hasta la punta.",q:"elevación de talones de pie técnica"},
-  {id:"hlr",name:"Elevación de piernas colgado",sets:3,reps:"10-15",rest:"60 s",unit:"r",cue:"Colgado de la barra, sube las piernas sin balancearte y baja lento.",q:"elevación de piernas colgado técnica"},
-  {id:"fin3",name:"Bicicleta suave (final)",sets:1,reps:"10 min",rest:"0 s",unit:"min",cue:"Ritmo suave para soltar las piernas después de la sentadilla.",q:"bicicleta estática enfriamiento"}]},
- {key:"d4",short:"Torso",title:"Torso completo",sub:"Pecho, espalda, hombro y brazos, más 15 minutos de cardio",ex:[
-  {id:"incbar",name:"Press inclinado con barra",sets:4,reps:"6-8",rest:"2-3 min",key:true,cue:"Banco a 30°, baja la barra al pecho alto y empuja sin despegar la espalda.",q:"press inclinado con barra técnica"},
-  {id:"dbrow",name:"Remo con mancuerna a una mano",sets:4,reps:"8-10 c/lado",rest:"90 s",key:true,cue:"Mano y rodilla en el banco, jala la mancuerna hacia la cadera.",q:"remo con mancuerna a una mano técnica"},
-  {id:"chestpress",name:"Press de pecho en máquina",sets:3,reps:"10-12",rest:"90 s",cue:"Agarres a la altura del pecho medio, empuja sin bloquear codos.",q:"press de pecho en máquina técnica"},
-  {id:"widepull",name:"Jalón al pecho agarre abierto",sets:3,reps:"10-12",rest:"90 s",cue:"Agarre ancho, jala la barra al pecho alto sacando el pecho.",q:"jalón al pecho agarre abierto técnica"},
-  {id:"arnold",name:"Press Arnold",sets:3,reps:"10-12",rest:"90 s",cue:"Empieza con las palmas hacia ti y gíralas mientras subes.",q:"press arnold técnica"},
-  {id:"reardelt",name:"Pájaros en máquina",sets:3,reps:"12-15",rest:"60 s",cue:"Pecho pegado al respaldo, abre los brazos hacia atrás con los codos un poco doblados.",q:"pec deck inverso deltoides posterior técnica"},
-  {id:"inclcurl",name:"Curl inclinado con mancuernas",sets:3,reps:"10-12",rest:"60 s",cue:"Banco a 45°, brazos colgando atrás del cuerpo, sube sin mover los codos.",q:"curl inclinado con mancuernas técnica"},
-  {id:"skull",name:"Press francés con barra Z",sets:3,reps:"10-12",rest:"60 s",cue:"Acostado, baja la barra hacia la frente doblando solo los codos.",q:"press francés barra z técnica"},
-  {id:"fin4",name:"Caminata inclinada (final)",sets:1,reps:"15 min",rest:"0 s",unit:"min",cue:"Caminadora con inclinación de 10 a 12% a paso rápido.",q:"caminata inclinada caminadora 12 3 30"}]},
- {key:"d5",short:"Pierna",title:"Pierna posterior y core",sub:"Femoral, glúteo y abdomen, más 15 minutos de cardio",ex:[
-  {id:"rdl",name:"Peso muerto rumano con barra",sets:4,reps:"6-8",rest:"2-3 min",key:true,cue:"Rodillas suaves, lleva la cadera atrás con la barra pegada a las piernas hasta sentir el estiramiento.",q:"peso muerto rumano técnica correcta"},
-  {id:"hipthrust",name:"Hip thrust con barra",sets:3,reps:"8-10",rest:"2 min",cue:"Espalda alta en el banco, mentón abajo, empuja con los talones. Raquel también lo hace: comparen sus récords.",q:"hip thrust con barra técnica correcta"},
-  {id:"hack",name:"Sentadilla hack",sets:3,reps:"10-12",rest:"2 min",key:true,cue:"Espalda pegada al respaldo, baja profundo y controlado.",q:"sentadilla hack máquina técnica"},
-  {id:"lyingcurl",name:"Curl femoral acostado",sets:3,reps:"10-12",rest:"60 s",cue:"Cadera pegada al banco, sube rápido y baja en 3 segundos.",q:"curl femoral acostado técnica"},
-  {id:"walklunge",name:"Zancada caminando con mancuernas",sets:3,reps:"12 c/pierna",rest:"90 s",cue:"Pasos largos, rodilla de atrás casi toca el piso, empuja con el talón de adelante.",q:"zancada caminando con mancuernas técnica"},
-  {id:"seatcalf",name:"Elevación de talones sentado",sets:3,reps:"12-15",rest:"60 s",cue:"Pausa abajo 1 segundo y sube completo.",q:"elevación de talones sentado técnica"},
-  {id:"cablecrunch",name:"Crunch en polea",sets:3,reps:"12-15",rest:"60 s",cue:"De rodillas frente a la polea alta, enrolla el torso llevando los codos hacia los muslos.",q:"crunch en polea de rodillas técnica"},
-  {id:"fin5",name:"Escaladora (final)",sets:1,reps:"15 min",rest:"0 s",unit:"min",cue:"Ritmo constante, sin recargarte en los barandales.",q:"stairmaster escaladora técnica"}]},
- {key:"d6",short:"Cardio",title:"Cardio y movilidad",sub:"30 a 45 minutos de cardio suave. Pueden hacerlo juntos.",cardio:true},
- {key:"d7",short:"Libre",title:"Descanso",sub:"El músculo crece cuando descansas"}
+// ================= CRISTIAN (split A/B) =================
+const H="2-3 min", M="90 s", I="60 s";
+const X=(id,name,sets,reps,rest,cue,q,o)=>Object.assign({id,name,sets,reps,rest,cue,q},o||{});
+const FIN=(id,name,mins,cue,q)=>({id,name:name+" (final)",sets:1,reps:mins+" min",rest:"0 s",unit:"min",cue,q});
+const z2="Zona 2: un ritmo en el que todavía puedes hablar, pero no cantar.";
+const EX={
+ bench:(s,r)=>X("bench","Press de banca con barra",s,r,H,"Escápulas juntas y abajo, pies firmes. Baja la barra a la parte baja del pecho y empuja en línea recta.","press de banca con barra técnica correcta",{key:true,inc:5}),
+ incdb:(s,r)=>X("incdb","Press inclinado con mancuernas",s,r,M,"Banco a 30°, baja controlado hasta sentir el estiramiento del pecho, codos a 45°.","press inclinado con mancuernas técnica",{inc:5}),
+ dips:(s,r)=>X("dips","Fondos con peso",s,r,H,"Anota el peso que agregas con el cinturón (0 si es sin peso). Torso un poco inclinado, baja hasta 90° en los codos.","fondos con peso técnica",{inc:5}),
+ cablefly:(s,r)=>X("cablefly","Aperturas en polea",s,r,I,"Codos ligeramente doblados, junta las manos frente al pecho y aprieta 1 segundo.","aperturas en polea pecho técnica",{inc:5}),
+ cgbench:(s,r)=>X("cgbench","Press de banca agarre cerrado",s,r,H,"Manos al ancho de los hombros, codos pegados al cuerpo. Baja a la parte baja del pecho.","press de banca agarre cerrado técnica",{inc:5}),
+ ropepush:(s,r)=>X("ropepush","Extensión de tríceps en polea con cuerda",s,r,I,"Codos pegados al cuerpo, abre la cuerda al final y aprieta el tríceps.","extensión de tríceps en polea con cuerda técnica",{inc:5}),
+ ohtri:(s,r)=>X("ohtri","Extensión de tríceps sobre la cabeza",s,r,I,"De espaldas a la polea o con mancuerna, codos al frente, estira completo por arriba de la cabeza.","extensión de tríceps sobre la cabeza técnica",{inc:5}),
+ tbar:(s,r)=>X("tbar","Remo en barra T",s,r,H,"Pecho arriba y espalda recta. Jala hacia el abdomen apretando la espalda.","remo en barra t técnica",{key:true,inc:5}),
+ pullup:(s,r)=>X("pullup","Dominadas con peso",s,r,H,"Anota el peso que agregas (0 si es sin peso). Sube hasta pasar la barbilla y baja completo.","dominadas con peso técnica",{key:true,inc:5}),
+ chestrow:(s,r)=>X("chestrow","Remo con pecho apoyado",s,r,M,"Pecho pegado al banco o almohadilla, jala con los codos hacia atrás sin levantar el pecho.","remo con pecho apoyado técnica",{inc:5}),
+ cablerow:(s,r)=>X("cablerow","Remo sentado en polea",s,r,M,"Espalda neutra, lleva el agarre al ombligo y junta escápulas.","remo sentado en polea técnica correcta",{inc:5}),
+ facepull:(s,r)=>X("facepull","Face pull en polea",s,r,I,"Cuerda a la altura de la cara, jala separando las manos hacia las orejas.","face pull polea técnica correcta",{inc:5}),
+ bbcurl:(s,r)=>X("bbcurl","Curl con barra",s,r,I,"Codos fijos a los costados, sube sin balancear el cuerpo y baja lento.","curl con barra técnica correcta",{inc:5}),
+ hammer:(s,r)=>X("hammer","Curl martillo",s,r,I,"Palmas viéndose entre sí, sube sin mover los codos.","curl martillo técnica",{inc:5}),
+ inclcurl:(s,r)=>X("inclcurl","Curl inclinado con mancuernas",s,r,I,"Banco a 45°, brazos colgando atrás del cuerpo, sube sin mover los codos.","curl inclinado con mancuernas técnica",{inc:5}),
+ bbrow:(s,r)=>X("bbrow","Remo con barra",s,r,H,"Torso a 45° con la espalda recta. Jala la barra hacia el ombligo.","remo con barra técnica correcta",{key:true,inc:5}),
+ dbrow:(s,r)=>X("dbrow","Remo con mancuerna a una mano",s,r,M,"Mano y rodilla en el banco, jala la mancuerna hacia la cadera.","remo con mancuerna a una mano técnica",{inc:5}),
+ squat:(s,r)=>X("squat","Sentadilla con barra",s,r,"3 min","Barra sobre los trapecios, pecho arriba, rodillas hacia afuera. Baja hasta paralelo o más.","sentadilla con barra técnica correcta",{key:true,inc:10}),
+ legpress:(s,r)=>X("legpress","Prensa de piernas",s,r,"2 min","Pies a la altura media de la plataforma, baja profundo sin despegar la espalda baja.","prensa de piernas técnica correcta",{inc:10}),
+ bulgarian:(s,r)=>X("bulgarian","Sentadilla búlgara con mancuernas",s,r,M,"Pie de atrás en el banco, baja recto hasta que la rodilla casi toque el piso.","sentadilla búlgara técnica",{inc:5}),
+ legext:(s,r)=>X("legext","Extensión de cuádriceps",s,r,I,"Sube controlado, aprieta arriba 1 segundo y baja lento.","extensión de cuádriceps máquina técnica",{inc:10}),
+ calf:(s,r)=>X("calf","Elevación de talones de pie",s,r,I,"Pausa abajo estirando y sube completo hasta la punta.","elevación de talones de pie técnica",{inc:10}),
+ hlr:(s,r)=>X("hlr","Elevación de piernas colgado",s,r,I,"Colgado de la barra, sube las piernas sin balancearte y baja lento.","elevación de piernas colgado técnica",{unit:"r"}),
+ ohpbar:(s,r)=>X("ohpbar","Press militar con barra",s,r,H,"De pie, abdomen y glúteos apretados. Empuja la barra en línea recta y mete la cabeza al pasar.","press militar de pie con barra técnica",{key:true,inc:5}),
+ ohp:(s,r)=>X("ohp","Press de hombro con mancuernas sentado",s,r,M,"Espalda pegada al respaldo. Sube sin chocar las mancuernas y baja hasta las orejas.","press de hombro con mancuernas sentado técnica",{inc:5}),
+ cablelat:(s,r)=>X("cablelat","Elevaciones laterales en polea",s,r,I,"Polea baja del lado contrario, sube el brazo hasta la altura del hombro sin impulso.","elevación lateral en polea técnica",{inc:5}),
+ reardelt:(s,r)=>X("reardelt","Pájaros para deltoide posterior",s,r,I,"En máquina o con mancuernas, abre los brazos hacia atrás con los codos un poco doblados.","rear delt fly técnica",{inc:5}),
+ bbshrug:(s,r)=>X("bbshrug","Encogimientos con barra",s,r,I,"Sube los hombros hacia las orejas, aguanta 1 segundo arriba.","encogimientos con barra técnica",{inc:10}),
+ cablecrunch:(s,r)=>X("cablecrunch","Crunch en polea",s,r,I,"De rodillas frente a la polea alta, enrolla el torso llevando los codos hacia los muslos.","crunch en polea de rodillas técnica",{inc:5}),
+ abwheel:(s,r)=>X("abwheel","Rueda abdominal",s,r,I,"Abdomen apretado, rueda hacia adelante sin que se hunda la espalda baja y regresa.","rueda abdominal técnica",{unit:"r"}),
+ incbar:(s,r)=>X("incbar","Press inclinado con barra",s,r,H,"Banco a 30°, baja la barra al pecho alto y empuja sin despegar la espalda.","press inclinado con barra técnica",{key:true,inc:5}),
+ latpull:(s,r)=>X("latpull","Jalón al pecho",s,r,M,"Pecho arriba, jala con los codos hacia las costillas sin balancearte.","jalón al pecho técnica correcta",{inc:5}),
+ chestpress:(s,r)=>X("chestpress","Press de pecho en máquina",s,r,M,"Agarres a la altura del pecho medio, empuja sin bloquear codos.","press de pecho en máquina técnica",{inc:5}),
+ straightarm:(s,r)=>X("straightarm","Jalón con brazos rectos en polea",s,r,I,"Brazos casi rectos, baja la barra o cuerda hasta los muslos apretando la espalda.","straight arm pulldown técnica",{inc:5}),
+ rdl:(s,r)=>X("rdl","Peso muerto rumano",s,r,H,"Rodillas suaves, lleva la cadera atrás con la barra pegada a las piernas hasta sentir el estiramiento.","peso muerto rumano técnica correcta",{key:true,inc:10}),
+ hipthrust:(s,r)=>X("hipthrust","Hip thrust con barra",s,r,"2 min","Espalda alta en el banco, mentón abajo, empuja con los talones. Raquel también lo hace: comparen récords.","hip thrust con barra técnica correcta",{inc:10}),
+ lyingcurl:(s,r)=>X("lyingcurl","Curl femoral acostado",s,r,I,"Cadera pegada al banco, sube rápido y baja en 3 segundos.","curl femoral acostado técnica",{inc:5}),
+ hack:(s,r)=>X("hack","Sentadilla hack",s,r,M,"Espalda pegada al respaldo, baja profundo y controlado.","sentadilla hack máquina técnica",{inc:10}),
+ walklunge:(s,r)=>X("walklunge","Zancada caminando con mancuernas",s,r,M,"Pasos largos, rodilla de atrás casi toca el piso, empuja con el talón de adelante.","zancada caminando con mancuernas técnica",{inc:5}),
+ seatcalf:(s,r)=>X("seatcalf","Elevación de talones sentado",s,r,I,"Pausa abajo 1 segundo y sube completo.","elevación de talones sentado técnica",{inc:10})
+};
+const F={
+ walk:FIN("finwalk","Caminata inclinada",20,"Caminadora con inclinación de 10 a 12%. "+z2,"caminata inclinada caminadora zona 2"),
+ bike:FIN("finbike","Intervalos en bici",20,"10 rondas: 30 segundos fuerte y 90 segundos suave.","intervalos bicicleta estática hiit"),
+ z2:FIN("finz2","Cardio zona 2 en bici o remo",25,z2,"cardio zona 2 bicicleta"),
+ stair:FIN("finstair","Escaladora",20,"Ritmo constante, sin recargarte en los barandales.","stairmaster escaladora técnica"),
+ row:FIN("finrow","Intervalos en remo",16,"8 rondas: 30 segundos fuerte y 90 segundos suave.","intervalos en remo ergómetro técnica")
+};
+const WU="Calienta 10 min (cardio suave, movilidad y 2 o 3 series de aproximación).";
+const D3={key:"d3",short:"Cuádr.",title:"Pierna: cuádriceps (Fuerza)",sub:WU+" Cardio final: 25 min en zona 2.",ex:[EX.squat(4,"5-6"),EX.legpress(3,"8-10"),EX.bulgarian(3,"10 c/pierna"),EX.legext(3,"12-15"),EX.calf(4,"10-12"),EX.hlr(3,"12-15"),F.z2]};
+const D4={key:"d4",short:"Hombro",title:"Hombro y abdomen (Fuerza)",sub:WU+" Cardio final: 20 min de escaladora.",ex:[EX.ohpbar(4,"5-6"),EX.ohp(3,"8-10"),EX.cablelat(4,"12-15"),EX.reardelt(3,"15-20"),EX.bbshrug(3,"10-12"),EX.cablecrunch(3,"15"),EX.abwheel(3,"10"),F.stair]};
+const D5={key:"d5",short:"Volum.",title:"Pecho y espalda (Volumen)",sub:WU+" Cardio final: 8 rondas en remo.",ex:[Object.assign(EX.incbar(4,"8-10"),{rest:"2 min"}),EX.latpull(4,"10-12"),EX.chestpress(3,"10-12"),EX.chestrow(3,"10-12"),EX.cablefly(3,"12-15"),EX.straightarm(3,"12-15"),F.row]};
+const D6={key:"d6",short:"Femor.",title:"Pierna: femoral y glúteo (Volumen)",sub:WU+" Cardio final: 25 min en zona 2.",ex:[EX.rdl(4,"6-8"),EX.hipthrust(3,"8-10"),EX.lyingcurl(3,"10-12"),EX.hack(3,"10-12"),EX.walklunge(3,"12 c/pierna"),EX.seatcalf(4,"15"),F.z2]};
+const D7={key:"d7",short:"Libre",title:"Descanso",sub:"Caminata ligera: busca entre 8,000 y 10,000 pasos.",rest:true};
+const C_PLAN_A=[
+ {key:"d1",short:"Pecho",title:"Pecho y tríceps (Fuerza)",sub:WU+" Cardio final: 20 min de caminata inclinada.",ex:[EX.bench(4,"5-6"),EX.incdb(3,"8-10"),EX.dips(3,"6-10"),EX.cablefly(3,"12-15"),EX.cgbench(3,"6-8"),EX.ropepush(3,"12-15"),EX.ohtri(3,"10-12"),F.walk]},
+ {key:"d2",short:"Espal.",title:"Espalda y bíceps (Fuerza)",sub:WU+" Cardio final: 10 rondas en bici.",ex:[EX.tbar(4,"6-8"),EX.pullup(4,"5-8"),EX.chestrow(3,"8-10"),EX.cablerow(3,"10-12"),EX.facepull(3,"15"),EX.bbcurl(3,"8-10"),EX.hammer(3,"10-12"),F.bike]},
+ D3,D4,D5,D6,D7
 ];
-C_PLAN[6].rest=true;
+const C_PLAN_B=[
+ {key:"d1",short:"P+E",title:"Pecho y espalda (Fuerza)",sub:WU+" Cardio final: 20 min de caminata inclinada.",ex:[EX.bench(4,"5-6"),EX.pullup(4,"5-8"),EX.incdb(3,"8-10"),EX.bbrow(3,"6-8"),EX.dips(3,"8-10"),EX.dbrow(3,"10-12 c/lado"),F.walk]},
+ {key:"d2",short:"Brazos",title:"Brazos (Volumen)",sub:WU+" Cardio final: 10 rondas en bici.",ex:[EX.cgbench(4,"6-8"),EX.bbcurl(4,"8-10"),EX.ohtri(3,"10-12"),EX.inclcurl(3,"10-12"),EX.ropepush(3,"12-15"),EX.hammer(3,"12"),F.bike]},
+ D3,D4,D5,D6,D7
+];
+const C_PLAN=C_PLAN_A;
 const C_PHASES=[
- {name:"Base",desc:"Hipertrofia con 8 a 12 repeticiones para dominar los movimientos y crear el hábito."},
- {name:"Fuerza",desc:"Menos repeticiones y más peso en los básicos: banca, sentadilla, peso muerto y remo."},
- {name:"Volumen",desc:"Más series y descansos más cortos para ganar músculo y marcarte."}
+ {name:"Semana A",desc:"Semana A: pecho y tríceps, espalda y bíceps, cuádriceps, hombro, pecho y espalda, femoral y glúteo."},
+ {name:"Semana B",desc:"Semana B: pecho y espalda, brazos, cuádriceps, hombro, pecho y espalda, femoral y glúteo."},
+ {name:"Descarga",desc:"Semana de descarga: mismos pesos con la mitad de las series para recuperarte. La app ya ajustó las series."}
 ];
-const C_OVR=[{},{
-  bench:{sets:5,reps:"5",rest:"3 min"},squat:{sets:5,reps:"5",rest:"3 min"},rdl:{reps:"5-6",rest:"3 min"},
-  incbar:{reps:"5-6"},bbrow:{reps:"6-8"},pullup:{sets:5,reps:"5-8"},legpress:{reps:"8-10"},hack:{reps:"8-10"},
-  ohp:{id:"ohpbar",name:"Press militar de pie con barra",reps:"5-6",rest:"2-3 min",cue:"Abdomen y glúteos apretados, empuja la barra en línea recta y mete la cabeza al pasar.",q:"press militar de pie con barra técnica"}
-},{
-  bench:{reps:"8-10",rest:"2 min"},incdb:{sets:4,rest:"90 s"},lateral:{sets:5,reps:"15-20",rest:"45 s"},
-  squat:{reps:"8-10",rest:"2 min"},legpress:{sets:4,reps:"12-15",rest:"90 s"},bbrow:{reps:"10-12",rest:"90 s"},
-  pullup:{reps:"8-12",rest:"90 s"},bbcurl:{sets:4,rest:"45 s"},hammer:{rest:"45 s"},ropepush:{sets:4,rest:"45 s"},
-  rdl:{reps:"8-10",rest:"2 min"},hack:{sets:4,rest:"90 s"},incbar:{reps:"8-10",rest:"2 min"},dbrow:{rest:"60 s"}
-}];
+const C_OVR=[{},{},{}];
 const yq=s=>s.toLowerCase()+" técnica";
 const C_ALTS={
  bench:[["Press de banca con mancuernas"],["Press de banca en Smith"]],
  incdb:[["Press inclinado en Smith"],["Press inclinado en máquina"]],
- ohp:[["Press de hombro en máquina"],["Press militar de pie con barra"]],
- ohpbar:[["Press de hombro con mancuernas"],["Press de hombro en máquina"]],
+ dips:[["Fondos en máquina asistida"],["Press de banca agarre cerrado"]],
  cablefly:[["Pec deck (máquina de aperturas)"],["Aperturas con mancuernas"]],
- lateral:[["Elevaciones laterales en polea"],["Elevaciones laterales en máquina"]],
- dips:[["Fondos en máquina asistida"],["Press cerrado en banca"]],
+ cgbench:[["Press cerrado en Smith"],["Fondos con peso"]],
  ropepush:[["Extensión de tríceps con barra en polea"],["Fondos en banco"]],
- ohtri:[["Extensión sobre la cabeza con mancuerna"],["Press francés con barra Z"]],
- fin1:[["Escaladora"],["Bicicleta estática por intervalos"]],
- fin2:[["Caminata inclinada"],["Remadora"]],
- fin3:[["Caminata suave"],["Elíptica"]],
- fin4:[["Escaladora"],["Bicicleta estática por intervalos"]],
- fin5:[["Caminata inclinada"],["Remadora"]],
+ ohtri:[["Press francés con barra Z"],["Extensión sobre la cabeza con mancuerna"]],
+ tbar:[["Remo con barra"],["Remo en máquina con pecho apoyado"]],
  pullup:[["Dominadas asistidas en máquina"],["Jalón al pecho agarre abierto"]],
- bbrow:[["Remo en barra T"],["Remo en máquina con pecho apoyado"]],
- latpull:[["Jalón agarre cerrado"],["Pullover en polea"]],
+ chestrow:[["Remo en máquina"],["Remo con mancuernas en banco inclinado"]],
  cablerow:[["Remo en máquina"],["Remo con mancuerna a una mano"]],
  facepull:[["Pájaros con mancuernas"],["Face pull con banda"]],
- shrug:[["Encogimientos con barra"],["Encogimientos en Smith"]],
  bbcurl:[["Curl con barra Z"],["Curl en polea"]],
  hammer:[["Curl martillo con cuerda en polea"],["Curl concentrado"]],
+ inclcurl:[["Curl predicador"],["Curl en polea"]],
+ bbrow:[["Remo en barra T"],["Remo en Smith"]],
+ dbrow:[["Remo en polea a una mano"],["Remo en máquina"]],
  squat:[["Sentadilla en Smith"],["Sentadilla hack"]],
  legpress:[["Sentadilla hack"],["Sentadilla goblet"]],
  bulgarian:[["Zancada inversa con mancuernas"],["Split squat en Smith"]],
  legext:[["Sentadilla sissy"],["Zancada caminando"]],
- seatcurl:[["Curl femoral acostado"],["Curl nórdico asistido"]],
  calf:[["Elevación de talones en prensa"],["Elevación de talones en Smith"]],
  hlr:[["Elevación de rodillas en silla romana"],["Crunch en máquina"]],
+ ohpbar:[["Press militar en Smith"],["Press de hombro en máquina"]],
+ ohp:[["Press de hombro en máquina"],["Press Arnold"]],
+ cablelat:[["Elevaciones laterales con mancuernas"],["Elevaciones laterales en máquina"]],
+ reardelt:[["Face pull en polea"],["Pájaros en polea cruzada"]],
+ bbshrug:[["Encogimientos con mancuernas"],["Encogimientos en Smith"]],
+ cablecrunch:[["Crunch en máquina"],["Crunch en declinado con peso"]],
+ abwheel:[["Plancha con peso"],["Dead bug"]],
  incbar:[["Press inclinado con mancuernas"],["Press inclinado en Smith"]],
- dbrow:[["Remo en polea a una mano"],["Remo en máquina"]],
+ latpull:[["Dominadas"],["Jalón agarre neutro"]],
  chestpress:[["Press de banca con mancuernas"],["Fondos en paralelas"]],
- widepull:[["Dominadas"],["Jalón agarre neutro"]],
- arnold:[["Press de hombro en máquina"],["Press de hombro con mancuernas"]],
- reardelt:[["Pájaros con mancuernas"],["Face pull en polea"]],
- inclcurl:[["Curl predicador"],["Curl en polea"]],
- skull:[["Extensión de tríceps en polea con cuerda"],["Fondos en banco"]],
- rdl:[["Peso muerto rumano con mancuernas"],["Peso muerto convencional"]],
+ straightarm:[["Pullover con mancuerna"],["Pullover en máquina"]],
+ rdl:[["Peso muerto rumano con mancuernas"],["Buenos días con barra"]],
  hipthrust:[["Hip thrust en máquina"],["Glute bridge con barra"]],
+ lyingcurl:[["Curl femoral sentado"],["Curl nórdico asistido"]],
  hack:[["Prensa de piernas"],["Sentadilla frontal"]],
- lyingcurl:[["Curl femoral sentado"],["Curl femoral con fitball"]],
  walklunge:[["Zancada inversa"],["Step-up al cajón"]],
  seatcalf:[["Elevación de talones de pie"],["Elevación de talones en prensa"]],
- cablecrunch:[["Crunch en máquina"],["Rueda abdominal"]]
+ finwalk:[["Escaladora"],["Elíptica"]],
+ finbike:[["Intervalos en remo"],["Intervalos en caminadora"]],
+ finz2:[["Caminata inclinada"],["Elíptica"]],
+ finstair:[["Caminata inclinada"],["Elíptica"]],
+ finrow:[["Intervalos en bici"],["Escaladora"]]
 };
 Object.values(C_ALTS).forEach(list=>list.forEach(a=>{if(!a[1])a[1]=yq(a[0]);}));
 const C_MEAS=[["peso","Peso","lbs"],["cintura","Cintura","in"],["pecho","Pecho","in"],["brazo","Brazo","in"],["muslo","Muslo","in"]];
@@ -711,13 +722,16 @@ const PROFILES={
   hello:"Hola Raquel, tu rutina te está esperando",conn:"Conectada",bravo:"¡Muy bien, Raquel!",progEx:"hipthrust",measKey:"gluteo",
   measTip:"Mídete una vez por semana, el mismo día, en la mañana. Para crecer glúteo, fíjate en la medida de glúteo y cadera más que en la báscula.",
   theme:"#F0468A",confetti:["#E3367C","#FF8FBC","#FFD1E3","#B5175A","#F2C15A","#FFFFFF"],hash:"55f736add5b1cecf1d002b0247dcc3f1f56b865af84cd4adb14910b2e3a07ad0"},
- cristian:{key:"cristian",name:"Cristian",other:"raquel",col:"log_cristian",ls:"cristian-gym-v1",plan:C_PLAN,phases:C_PHASES,ovr:C_OVR,alts:C_ALTS,prot:180,meas:C_MEAS,
-  title:"Rutina de Cristian",sub:"Push, pull, pierna, torso y pierna posterior, cada día con cardio al final para ganar músculo magro. Sesiones de 1 hora y media.",
+ cristian:{key:"cristian",name:"Cristian",other:"raquel",col:"log_cristian",ls:"cristian-gym-v1",plan:C_PLAN,plans:[C_PLAN_A,C_PLAN_B],phases:C_PHASES,ovr:C_OVR,alts:C_ALTS,prot:180,meas:C_MEAS,
+  title:"Rutina de Cristian",sub:"Split A/B de 6 días: cada músculo 2 veces por semana, con cardio al final para músculo magro y quemar grasa. Sesiones de 90 minutos.",
   hello:"Hola Cristian, tu rutina te está esperando",conn:"Conectado",bravo:"¡Muy bien, Cristian!",progEx:"bench",measKey:"pecho",
   measTip:"Mídete una vez por semana, en la mañana. Para músculo magro, lo ideal es que pecho y brazo suban mientras la cintura se mantiene o baja.",
   theme:"#18A058",confetti:["#1F9D57","#5FD38D","#BFE6CD","#13703C","#F2C15A","#FFFFFF"],hash:"87e72e9fcdaaec40542afa72eedb6a3dba31e99e96f839e5ee7d6de8b2e50285"}
 };
-for(const p of Object.values(PROFILES))p.BY=Object.fromEntries(p.plan.map(d=>[d.key,d]));
+for(const p of Object.values(PROFILES)){p.BY=Object.fromEntries(p.plan.map(d=>[d.key,d]));if(p.plans)p.plansBY=p.plans.map(pl=>Object.fromEntries(pl.map(d=>[d.key,d])));}
+function planOf(prof,ph){prof=prof||ME;return prof.plans?prof.plans[ph===1?1:0]:prof.plan;}
+function dayOf(prof,key,ph){prof=prof||ME;return prof.plans?prof.plansBY[ph===1?1:0][key]:prof.BY[key];}
+function sessDay(s,prof){return dayOf(prof,s.day,s.phase);}
 const meKey=document.documentElement.getAttribute("data-p")==="cristian"?"cristian":"raquel";
 const ME=PROFILES[meKey], PARTNER=PROFILES[ME.other];
 const PLAN=ME.plan, BY=ME.BY, PHASES=ME.phases, OVR=ME.ovr, ALTS=ME.alts, PROT_GOAL=ME.prot, MEAS=ME.meas;
@@ -762,8 +776,8 @@ function cfg(){if(!store.settings)store.settings={kind:"cfg",claimed:{},unlocked
 function sessOf(st){return Object.entries(st).filter(([k,v])=>v&&v.day).map(([k,v])=>Object.assign({_id:k},v));}
 const sessions=()=>sessOf(store);
 function trained(s,prof){
-  const BYx=(prof&&prof.BY)?prof.BY:BY;
-  if(BYx[s.day]&&BYx[s.day].cardio) return !!num(s.cardio&&s.cardio.min);
+  const dd=sessDay(s,prof||ME);
+  if(dd&&dd.cardio) return !!num(s.cardio&&s.cardio.min);
   for(const arr of Object.values(s.sets||{}))for(const x of arr||[])if(x&&(x.done||num(x.reps)))return true;
   return false;
 }
@@ -776,11 +790,13 @@ function phaseStart(st,prof){
 }
 function phaseAt(date,st,prof){
   const w=Math.max(0,Math.floor(daysBetween(monday(phaseStart(st,prof)),date)/7));
+  if((prof||ME).plans){const c=w%5;return {idx:c===4?2:c%2, week:c+1, cycle:Math.floor(w/5)+1, weeks:w};}
   return {idx:Math.floor(w/6)%3, week:w%6+1, cycle:Math.floor(w/18)+1, weeks:w};
 }
 function exercisesFor(dayKey,phaseIdx,prof){
-  prof=prof||ME;const d=prof.BY[dayKey]; if(!d||!d.ex) return [];
-  return d.ex.map(ex=>{const o=(prof.ovr[phaseIdx]||{})[ex.id]||{};return Object.assign({},ex,o,{base:ex.id,id:o.id||ex.id});});
+  prof=prof||ME;const d=dayOf(prof,dayKey,phaseIdx); if(!d||!d.ex) return [];
+  const deload=!!prof.plans&&phaseIdx===2;
+  return d.ex.map(ex=>{const o=(prof.ovr[phaseIdx]||{})[ex.id]||{};const r=Object.assign({},ex,o,{base:ex.id,id:o.id||ex.id});if(deload&&r.unit!=="min")r.sets=Math.max(1,Math.ceil(r.sets/2));return r;});
 }
 function effective(ex,s,prof){
   const i=s&&s.swaps?s.swaps[ex.id]:undefined, alts=(prof||ME).alts[ex.id]||[];
@@ -809,7 +825,7 @@ function suggestion(ex,last){
   if(!full) return "";
   const maxkg=Math.max(...last.sets.map(x=>num(x.kg)));
   const big=/hip thrust|sentadilla|prensa|peso muerto|hack|banca|remo con barra|press inclinado con barra|militar/i.test(ex.name);
-  const inc=big?(maxkg>=90?10:5):(maxkg>=20?5:2.5);
+  const inc=ex.inc||(big?(maxkg>=90?10:5):(maxkg>=20?5:2.5));
   return "Completaste todas las reps la vez pasada. Hoy sube a "+(+(maxkg+inc).toFixed(1))+" lbs.";
 }
 
@@ -873,7 +889,7 @@ const C_REWARDS=[
  {id:"r8",prize:"Tarde de partido o videojuegos sin interrupciones",goal:"Rompe 5 récords personales",icon:"star",need:s=>[s.prs,5]},
  {id:"r9",prize:"Cena en tu restaurante favorito",goal:"Llega a 20 entrenos",icon:"cup",need:s=>[s.total,20]},
  {id:"r10",prize:"Ropa o tenis nuevos para el gym",goal:"Racha de 4 semanas completas",icon:"shoe",need:s=>[s.bestStreak,4]},
- {id:"r11",prize:"Un día libre de quehaceres",goal:"Termina la Fase 1 con al menos 25 entrenos",icon:"spa",need:s=>[s.phaseWeeks>=6?s.total:Math.min(s.total,24),25]},
+ {id:"r11",prize:"Un día libre de quehaceres",goal:"Termina tu primer ciclo de 5 semanas con al menos 22 entrenos",icon:"spa",need:s=>[s.phaseWeeks>=5?s.total:Math.min(s.total,21),22]},
  {id:"r12",prize:"Escapada de fin de semana",goal:"Llega a 50 entrenos",icon:"plane",need:s=>[s.total,50]}
 ];
 PROFILES.raquel.rewards=R_REWARDS;PROFILES.cristian.rewards=C_REWARDS;
@@ -928,7 +944,15 @@ let openSwap=null, openEx=null;
 
 function renderEntreno(){
   const ph=phaseAt(today()), P=PHASES[ph.idx];
-  document.getElementById("phasecard").innerHTML=`
+  if(ME.plans){
+    const lab=["A","B","A","B","Descarga"];
+    document.getElementById("phasecard").innerHTML=`
+     <div class="phase"><div><div class="eyebrow">Ciclo ${ph.cycle} · semana ${ph.week} de 5</div><div class="pn">${P.name}</div></div></div>
+     <div class="phases cyc">${lab.map((l,i)=>`<div class="${i===ph.week-1?"on":""}">${l}</div>`).join("")}</div>
+     <p class="cue">${P.desc}</p>
+     <details><summary>Cómo progresar</summary><ul class="howto"><li>Termina cada serie con 1 o 2 repeticiones en reserva.</li><li>Quédate en el mismo peso hasta llegar al tope del rango en todas las series.</li><li>Después sube 5 lbs en tren superior o 10 lbs en pierna. La app te avisa.</li><li>Si las reps bajan del rango 2 sesiones seguidas, revisa sueño, comida y recuperación.</li><li>Cada 5ª semana es de descarga y luego empieza un ciclo nuevo.</li></ul></details>
+     <details><summary>Cambiar la fecha de inicio</summary><label class="field" style="margin-top:8px">Empecé la semana A del ciclo 1 la semana del<input type="date" id="phase-start" value="${phaseStart()}"></label></details>`;
+  } else document.getElementById("phasecard").innerHTML=`
    <div class="phase"><div><div class="eyebrow">Fase ${ph.idx+1} de 3${ph.cycle>1?" · ciclo "+ph.cycle:""}</div><div class="pn">${P.name} · semana ${ph.week} de 6</div></div></div>
    <div class="pbar" aria-hidden="true"><i style="width:${Math.round(ph.week/6*100)}%"></i></div>
    <p class="cue">${P.desc} Cada 6 semanas la rutina cambia sola para que sigas progresando.</p>
@@ -958,7 +982,8 @@ function renderProtein(){
 
 function renderDays(){
   const nav=document.getElementById("days");
-  nav.innerHTML=PLAN.map((d,i)=>`<button class="day" data-k="${d.key}" aria-pressed="${d.key===cur.day}"><b>${i+1}</b><span>${d.short}</span></button>`).join("");
+  const s0=store[sid()];
+  nav.innerHTML=planOf(ME,s0&&s0.phase!=null?s0.phase:phaseAt(cur.date).idx).map((d,i)=>`<button class="day" data-k="${d.key}" aria-pressed="${d.key===cur.day}"><b>${i+1}</b><span>${d.short}</span></button>`).join("");
   nav.querySelectorAll(".day").forEach(b=>b.onclick=()=>{cur.day=b.dataset.k;openSwap=null;openEx=null;renderDays();renderToday();});
 }
 
@@ -975,9 +1000,10 @@ function summaryHTML(s,d){
    <div class="sumfoot">Poniéndonos fit juntos ♥</div></div>`;
 }
 function renderToday(){
-  const d=BY[cur.day], host=document.getElementById("today"), s=store[sid()];
+  const host=document.getElementById("today"), s=store[sid()];
   const phIdx=s&&s.phase!=null?s.phase:phaseAt(cur.date).idx;
-  let h=`<div class="dayhead"><div><div class="eyebrow">Día ${PLAN.indexOf(d)+1}</div><h2>${d.title}</h2><p>${d.sub}</p></div>`;
+  const d=dayOf(ME,cur.day,phIdx);
+  let h=`<div class="dayhead"><div><div class="eyebrow">${ME.plans?PHASES[phIdx].name+" · ":""}Día ${planOf(ME,phIdx).indexOf(d)+1}</div><h2>${d.title}</h2><p>${d.sub}</p></div>`;
   if(!d.rest) h+=`<label class="datepick">Fecha<input type="date" id="date-in" value="${cur.date}"></label>`;
   h+=`</div>`;
   if(d.rest){
@@ -1040,7 +1066,7 @@ function renderToday(){
   host.innerHTML=h;
 
   const di=document.getElementById("date-in");
-  if(di) di.onchange=()=>{if(di.value){cur.date=di.value;openSwap=null;openEx=null;renderToday();}};
+  if(di) di.onchange=()=>{if(di.value){cur.date=di.value;openSwap=null;openEx=null;renderDays();renderToday();}};
   host.querySelectorAll("[data-toggle]").forEach(b=>b.onclick=()=>{
     const id=b.dataset.toggle;openEx=openEx===id?"":id;openSwap=null;renderToday();
     const el=document.querySelector(".ex.open");if(el)el.scrollIntoView({behavior:"smooth",block:"nearest"});
@@ -1119,7 +1145,7 @@ function renderCal(st){
   const base=new Date();base.setDate(1);base.setMonth(base.getMonth()+calOff);
   const y=base.getFullYear(),m=base.getMonth();
   const first=(new Date(y,m,1).getDay()+6)%7, n=new Date(y,m+1,0).getDate();
-  const cardioDates=new Set(sessions().filter(s=>BY[s.day]&&BY[s.day].cardio&&trained(s)).map(s=>s.date));
+  const cardioDates=new Set(sessions().filter(s=>{const dd=sessDay(s,ME);return dd&&dd.cardio&&trained(s);}).map(s=>s.date));
   let cells=["L","M","M","J","V","S","D"].map(x=>`<div class="h">${x}</div>`).join("");
   for(let i=0;i<first;i++)cells+=`<div></div>`;
   const t=today();
@@ -1205,7 +1231,7 @@ function vol(s){let t=0;for(const arr of Object.values(s.sets||{}))for(const x o
 function setsDone(s){let n=0;for(const arr of Object.values(s.sets||{}))for(const x of arr||[])if(x&&(x.done||num(x.reps)))n++;return n;}
 function renderHist(){
   const list=sessions().filter(trained).sort((a,b)=>b.date<a.date?-1:1).slice(0,15);
-  document.getElementById("hist").innerHTML=list.length?list.map(s=>{const d=BY[s.day]||{title:s.day};
+  document.getElementById("hist").innerHTML=list.length?list.map(s=>{const d=sessDay(s,ME)||{title:s.day};
     const r=d.cardio?`${esc(s.cardio.min||"?")} min${s.cardio.km?" · "+esc(s.cardio.km)+" km":""}`:`${setsDone(s)} series · ${vol(s).toLocaleString("es")} lbs`;
     return `<div class="hrow"><div><div class="d">${s.date.split("-").reverse().join("/")}</div>${esc(d.title)}</div><div class="v">${r}</div></div>`;}).join(""):`<div class="empty">Aún no hay entrenos guardados.</div>`;
 }
@@ -1282,7 +1308,7 @@ const pstore={}, cheers={}; let fsRef=null, pLoaded=false; const seenEv=new Set(
 const EMO=["🎉","💪","🔥","❤️"];
 function rel(d){const t=today();if(d===t)return "hoy";if(d===addDays(t,-1))return "ayer";return short(d);}
 function isComplete(s,prof){
-  const d=prof.BY[s.day]; if(!d||!d.ex) return false;
+  const d=sessDay(s,prof); if(!d||!d.ex) return false;
   const exs=exercisesFor(s.day,s.phase!=null?s.phase:0,prof);
   return exs.length>0&&exs.every(b=>{const e=effective(b,s,prof);const l=(s.sets&&s.sets[e.logKey])||[];return l.filter(x=>x&&x.done).length>=e.sets;});
 }
@@ -1290,7 +1316,7 @@ function partnerEvents(){
   const P=PARTNER, out=[], t=today();
   sessOf(pstore).forEach(s=>{
     if(!trained(s,P)) return;
-    const d=P.BY[s.day]||{title:s.day}, at=s.updatedAt||parse(s.date).getTime();
+    const d=sessDay(s,P)||{title:s.day}, at=s.updatedAt||parse(s.date).getTime();
     if(d.cardio) out.push({id:"w_"+s._id,date:s.date,at,text:"hizo "+d.title.toLowerCase(),you:"hiciste "+d.title.toLowerCase(),detail:(s.cardio&&s.cardio.min?s.cardio.min+" min":"")});
     else if(isComplete(s,P)) out.push({id:"w_"+s._id+"_c",date:s.date,at,text:"completó "+d.title,you:"completaste "+d.title,detail:setsDone(s)+" series · "+vol(s).toLocaleString("en-US")+" lbs"});
     else out.push({id:"w_"+s._id,date:s.date,at,text:(s.date===t?"está entrenando ":"entrenó ")+d.title,you:(s.date===t?"estás entrenando ":"entrenaste ")+d.title,detail:setsDone(s)+" series"});
@@ -1334,8 +1360,8 @@ function cheer(e,emoji){
 }
 function personToday(st,prof){
   const t=today(), ss=sessOf(st).filter(s=>s.date===t&&trained(s,prof));
-  if(!ss.length){const pd=prof.BY[DAYMAP[new Date().getDay()]];return pd.rest?"Hoy toca descansar":"Hoy toca: "+pd.title;}
-  const s=ss[0], d=prof.BY[s.day]||{title:s.day};
+  if(!ss.length){const pd=dayOf(prof,DAYMAP[new Date().getDay()],phaseAt(today(),st,prof).idx);return pd.rest?"Hoy toca descansar":"Hoy toca: "+pd.title;}
+  const s=ss[0], d=sessDay(s,prof)||{title:s.day};
   if(d.cardio) return "Hizo "+d.title.toLowerCase();
   return isComplete(s,prof)?"Completó "+d.title+" ✓":"Entrenando "+d.title+" · "+setsDone(s)+" series";
 }
@@ -1390,11 +1416,11 @@ function renderPartnerWeek(){
   const c=pstore.settings||{};
   const rws=Object.entries(c.unlockedAt||{}).filter(([id,d])=>d>=w0).map(([id])=>(P.rewards.find(r=>r.id===id)||{}).prize).filter(Boolean);
   const prot=Object.values(pstore).filter(v=>v&&v.kind==="p"&&v.date>=w0&&num(v.g)>=P.prot).length;
-  const last=sessOf(pstore).filter(s=>trained(s,P)&&!(P.BY[s.day]||{}).cardio).sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:(b.updatedAt||0)-(a.updatedAt||0))[0];
+  const last=sessOf(pstore).filter(s=>trained(s,P)&&!(sessDay(s,P)||{}).cardio).sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:(b.updatedAt||0)-(a.updatedAt||0))[0];
   const strip=["L","M","M","J","V","S","D"].map((l,i)=>{const d=addDays(w0,i);return `<div class="wd${days.has(d)?" on":""}${d===t?" td":""}"><span>${l}</span><i></i></div>`;}).join("");
   let lastHTML="";
   if(last){
-    const d=P.BY[last.day]||{title:last.day};
+    const d=sessDay(last,P)||{title:last.day};
     const rows=Object.entries(last.sets||{}).map(([k,arr])=>{
       const done=(arr||[]).filter(x=>x&&(x.done||num(x.reps)));if(!done.length)return "";
       const top=done.reduce((a,x)=>num(x.kg)>num(a.kg)?x:a,done[0]);
